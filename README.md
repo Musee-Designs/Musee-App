@@ -133,6 +133,6 @@ Update your assigned issues as you work.
 |------|------|
 | Ivette Saldana Hernandez | Design Team Lead |
 | WenHui Chen | Developer |
-| Your Name | Developer |
+| Rishika Joshi | Developer |
 | Your Name | Developer |
 | Your Name | Developer |
