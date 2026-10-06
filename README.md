@@ -134,5 +134,5 @@ Update your assigned issues as you work.
 | Ivette Saldana Hernandez | Design Team Lead |
 | WenHui Chen | Developer |
 | Rishika Joshi | Developer |
-| Your Name | Developer |
+| Adrianne Chow-Quan | Developer |
 | Your Name | Developer |
