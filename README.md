@@ -135,4 +135,4 @@ Update your assigned issues as you work.
 | WenHui Chen | Developer |
 | Rishika Joshi | Developer |
 | Adrianne Chow-Quan | Developer |
-| Your Name | Developer |
+| Sarah Zeitouni | Developer |
