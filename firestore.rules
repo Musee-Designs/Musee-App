@@ -1,0 +1,168 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function validUser(uid) {
+      return request.resource.data.keys().hasAll([
+        'uid', 'username', 'displayName',
+        'bio', 'photoURL', 'createdAt', 'updatedAt'
+      ])
+      && request.resource.data.keys().hasOnly([
+        'uid', 'username', 'displayName',
+        'bio', 'photoURL', 'createdAt', 'updatedAt'
+      ])
+      && request.resource.data.uid == uid
+      && request.resource.data.username is string
+      && request.resource.data.username.size() <= 30
+      && request.resource.data.displayName is string
+      && request.resource.data.displayName.size() <= 80
+      && request.resource.data.bio is string
+      && request.resource.data.bio.size() <= 300
+      && (request.resource.data.photoURL == null
+          || request.resource.data.photoURL is string)
+      && request.resource.data.createdAt is timestamp
+      && request.resource.data.updatedAt is timestamp;
+    }
+
+    function validPost() {
+      return request.resource.data.keys().hasAll([
+        'id', 'authorId', 'track', 'caption',
+        'mood', 'createdAt', 'updatedAt'
+      ])
+      && request.resource.data.keys().hasOnly([
+        'id', 'authorId', 'track', 'caption',
+        'mood', 'createdAt', 'updatedAt'
+      ])
+      && request.resource.data.id is string
+      && request.resource.data.authorId is string
+      && request.resource.data.caption is string
+      && request.resource.data.caption.size() <= 500
+      && (request.resource.data.mood == null
+          || request.resource.data.mood is string)
+      && request.resource.data.track is map
+      && request.resource.data.track.keys().hasAll([
+        'spotifyId', 'title', 'artistNames',
+        'albumName', 'albumArtURL', 'spotifyURL'
+      ])
+      && request.resource.data.track.keys().hasOnly([
+        'spotifyId', 'title', 'artistNames',
+        'albumName', 'albumArtURL', 'spotifyURL'
+      ])
+      && request.resource.data.track.spotifyId is string
+      && request.resource.data.track.title is string
+      && request.resource.data.track.artistNames is list
+      && request.resource.data.track.albumName is string
+      && (request.resource.data.track.albumArtURL == null
+          || request.resource.data.track.albumArtURL is string)
+      && request.resource.data.track.spotifyURL is string
+      && request.resource.data.createdAt is timestamp
+      && request.resource.data.updatedAt is timestamp;
+    }
+
+    // User profiles
+    match /users/{uid} {
+      allow read: if signedIn();
+
+      allow create: if isOwner(uid)
+        && validUser(uid)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isOwner(uid)
+        && validUser(uid)
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([
+            'username', 'displayName', 'bio',
+            'photoURL', 'updatedAt'
+          ])
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if false;
+
+      // Following relationships
+      match /following/{targetUid} {
+        allow read: if signedIn();
+
+        allow create: if isOwner(uid)
+          && uid != targetUid
+          && exists(/databases/$(database)/documents/users/$(targetUid))
+          && request.resource.data.keys().hasOnly([
+            'followedUserId', 'createdAt'
+          ])
+          && request.resource.data.followedUserId == targetUid
+          && request.resource.data.createdAt == request.time;
+
+        allow delete: if isOwner(uid);
+        allow update: if false;
+      }
+
+      // Private saved songs
+      match /savedSongs/{songId} {
+        allow read: if isOwner(uid);
+
+        allow create: if isOwner(uid)
+          && request.resource.data.keys().hasOnly([
+            'track', 'savedAt'
+          ])
+          && request.resource.data.track is map
+          && request.resource.data.track.spotifyId == songId
+          && request.resource.data.savedAt == request.time;
+
+        allow delete: if isOwner(uid);
+        allow update: if false;
+      }
+    }
+
+    // Music posts
+    match /posts/{postId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && validPost()
+        && request.resource.data.id == postId
+        && request.resource.data.authorId == request.auth.uid
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if signedIn()
+        && resource.data.authorId == request.auth.uid
+        && validPost()
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly([
+            'caption', 'mood', 'updatedAt'
+          ])
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if signedIn()
+        && resource.data.authorId == request.auth.uid;
+
+      // Likes
+      match /likes/{uid} {
+        allow read: if signedIn();
+
+        allow create: if isOwner(uid)
+          && exists(/databases/$(database)/documents/posts/$(postId))
+          && request.resource.data.keys().hasOnly(['createdAt'])
+          && request.resource.data.createdAt == request.time;
+
+        allow delete: if isOwner(uid);
+        allow update: if false;
+      }
+    }
+
+    // Deny everything not explicitly allowed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
