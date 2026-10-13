@@ -19,7 +19,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test:rules": "firebase emulators:exec --only firestore \"node tests/firestore.rules.test.cjs\"",
+    "typecheck": "tsc --noEmit"
   },
   "private": true
 }
