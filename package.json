@@ -10,7 +10,9 @@
     "react-native": "0.86.3"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@types/react": "~19.2.2",
+    "firebase-tools": "^15.33.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
