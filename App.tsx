@@ -1,9 +1,11 @@
-import { useState } from 'react';
+
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+
+import LoginScreen from './src/screens/login';
+import SignupScreen from './src/screens/signup';
 
 import PlaceholderScreen from './screens/placeholderScreen';
 
@@ -28,108 +30,85 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {<Stack.Screen
-            name="Login"
-            component={LoginScreen}
-          />}
-        {<Stack.Screen
-            name="SignUp"
-            component={SignUpScreen}
-          />}
-        {<Stack.Screen
-            name="Main"
-            component={MainTabs}
-          />}
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="Login">
+          {({ navigation }) => (
+            <LoginScreen
+              onCreateAccount={() => navigation.navigate('SignUp')}
+            />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="SignUp">
+          {({ navigation }) => (
+            <SignupScreen
+              onLogin={() => navigation.navigate('Login')}
+            />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="Main" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-function MainTabs(){
+// Your teammates' main navigation
+function MainTabs() {
   return (
     <Tab.Navigator>
-        {<Tab.Screen
-            name="HomeFeed"
-            component={HomeFeedScreen}
-          />}
-        {<Tab.Screen
-            name="Search"
-            component={SearchScreen}
-          />}
-        {<Tab.Screen
-            name="Search"
-            component={ProfileScreen}
-          />}
-        {<Tab.Screen
-            name="Search"
-            component={DailyDropScreen}
-          />}
-        {<Tab.Screen
-            name="Search"
-            component={FriendsScreen}
-          />}
-        {<Tab.Screen
-            name="Search"
-            component={SharedMixesScreen}
-          />}
-      </Tab.Navigator>
+      <Tab.Screen
+        name="HomeFeed"
+        component={HomeFeedScreen}
+      />
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+      />
+      <Tab.Screen
+        name="DailyDrop"
+        component={DailyDropScreen}
+      />
+      <Tab.Screen
+        name="Friends"
+        component={FriendsScreen}
+      />
+      <Tab.Screen
+        name="SharedMixes"
+        component={SharedMixesScreen}
+      />
+    </Tab.Navigator>
   );
 }
 
-function LoginScreen(){
-  return (
-    <PlaceholderScreen title="Login" />
-  );
+// Placeholder screens from your teammates
+function HomeFeedScreen() {
+  return <PlaceholderScreen title="HomeFeed" />;
 }
 
-function SignUpScreen(){
-  return (
-    <PlaceholderScreen title="Signup" />
-  );
+function SearchScreen() {
+  return <PlaceholderScreen title="Search" />;
 }
 
-function HomeFeedScreen(){
-  return (
-    <PlaceholderScreen title="HomeFeed" />
-  );
+function ProfileScreen() {
+  return <PlaceholderScreen title="Profile" />;
 }
 
-function SearchScreen(){
-  return (
-    <PlaceholderScreen title="Search" />
-  );
+function DailyDropScreen() {
+  return <PlaceholderScreen title="DailyDrop" />;
 }
 
-function ProfileScreen(){
-  return (
-    <PlaceholderScreen title="Profile" />
-  );
+function FriendsScreen() {
+  return <PlaceholderScreen title="Friends" />;
 }
 
-function DailyDropScreen(){
-  return (
-    <PlaceholderScreen title="DailyDrop" />
-  );
+function SharedMixesScreen() {
+  return <PlaceholderScreen title="SharedMixes" />;
 }
-
-function FriendsScreen(){
-  return (
-    <PlaceholderScreen title="Friends" />
-  );
-}
-
-function SharedMixesScreen(){
-  return (
-    <PlaceholderScreen title="SharedMixes" />
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
