@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
 import PlaceholderScreen from './screens/placeholderScreen';
+// import ProfileScreen from './screens/profileScreen';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -58,19 +59,19 @@ function MainTabs(){
             component={SearchScreen}
           />}
         {<Tab.Screen
-            name="Search"
+            name="Profile"
             component={ProfileScreen}
           />}
         {<Tab.Screen
-            name="Search"
+            name="DailyDrop"
             component={DailyDropScreen}
           />}
         {<Tab.Screen
-            name="Search"
+            name="Friends"
             component={FriendsScreen}
           />}
         {<Tab.Screen
-            name="Search"
+            name="SharedMixes"
             component={SharedMixesScreen}
           />}
       </Tab.Navigator>
@@ -103,7 +104,7 @@ function SearchScreen(){
 
 function ProfileScreen(){
   return (
-    <PlaceholderScreen title="Profile" />
+    <ProfileScreen/>
   );
 }
 
