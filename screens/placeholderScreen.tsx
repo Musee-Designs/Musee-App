@@ -14,7 +14,7 @@ export default function PlaceholderScreen({
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>
-        {description ?? `${title} screen coming soon.`}
+        {description ?? `${title} screen being built!!`}
       </Text>
     </View>
   );
@@ -23,7 +23,7 @@ export default function PlaceholderScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFECCC',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
