@@ -9,7 +9,7 @@ const { Timestamp } = require("firebase/firestore");
 
 async function main() {
   const testEnv = await initializeTestEnvironment({
-    projectId: "demo-musee-rules",
+    projectId: "musee-app-68580",
     firestore: {
       host: "127.0.0.1",
       port: 8080,
