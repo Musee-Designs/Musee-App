@@ -1,10 +1,13 @@
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StatusBar } from 'expo-status-bar';
 
 import LoginScreen from './src/screens/login';
 import SignupScreen from './src/screens/signup';
+import SharedMixes from './src/services/screens/shared-mixes';
 
 import PlaceholderScreen from './screens/placeholderScreen';
 
@@ -28,34 +31,38 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="Login">
-          {({ navigation }) => (
-            <LoginScreen
-              onCreateAccount={() => navigation.navigate('SignUp')}
-            />
-          )}
-        </Stack.Screen>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login">
+            {({ navigation }) => (
+              <LoginScreen
+                onCreateAccount={() => navigation.navigate('SignUp')}
+              />
+            )}
+          </Stack.Screen>
 
-        <Stack.Screen name="SignUp">
-          {({ navigation }) => (
-            <SignupScreen
-              onLogin={() => navigation.navigate('Login')}
-            />
-          )}
-        </Stack.Screen>
+          <Stack.Screen name="SignUp">
+            {({ navigation }) => (
+              <SignupScreen
+                onLogin={() => navigation.navigate('Login')}
+              />
+            )}
+          </Stack.Screen>
 
-        <Stack.Screen name="Main" component={MainTabs} />
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen name="Main" component={MainTabs} />
+        </Stack.Navigator>
+      </NavigationContainer>
+
+      <StatusBar style="auto" />
+    </>
   );
 }
 
-// Your teammates' main navigation
+// Main application navigation
 function MainTabs() {
   return (
     <Tab.Navigator>
@@ -81,13 +88,13 @@ function MainTabs() {
       />
       <Tab.Screen
         name="SharedMixes"
-        component={SharedMixesScreen}
+        component={SharedMixes}
       />
     </Tab.Navigator>
   );
 }
 
-// Placeholder screens from your teammates
+// Placeholder screens
 function HomeFeedScreen() {
   return <PlaceholderScreen title="HomeFeed" />;
 }
@@ -106,8 +113,4 @@ function DailyDropScreen() {
 
 function FriendsScreen() {
   return <PlaceholderScreen title="Friends" />;
-}
-
-function SharedMixesScreen() {
-  return <PlaceholderScreen title="SharedMixes" />;
 }
