@@ -25,9 +25,15 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
+- Use React Navigation for all navigation.
+- Use `@react-navigation/native` for the NavigationContainer.
+- Use `@react-navigation/native-stack` for authentication and nested screens.
+- Use `@react-navigation/bottom-tabs` for main application tabs.
+- Keep navigation components in `src/navigation/`.
+- Keep screen components in `src/screens/`.
+- Use TypeScript parameter lists for type-safe navigation.
+- Once Firebase Authentication is integrated, show routes conditionally based on authentication state.
+- Do not introduce Expo Router without an agreed team migration.
 
 ## Building with EAS
 
