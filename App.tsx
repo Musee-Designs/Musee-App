@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import LoginScreen from './src/screens/login';
 import SignupScreen from './src/screens/signup';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
+import SearchScreen from './src/services/screens/search';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -27,6 +28,7 @@ export default function App() {
             {({ navigation }) => (
               <LoginScreen
                 onCreateAccount={() => navigation.navigate('SignUp')}
+                onGuest={() => navigation.navigate('Main', {screen: 'HomeFeed'})}
               />
             )}
           </Stack.Screen>

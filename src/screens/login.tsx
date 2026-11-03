@@ -4,9 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 type LoginScreenProps = {
   onCreateAccount: () => void;
+  onGuest: () => void;
 };
 
-export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
+export default function LoginScreen({ onCreateAccount, onGuest }: LoginScreenProps) {
   return (
   <View style={styles.background}>
     <View style={styles.container}>
@@ -41,7 +42,7 @@ export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.guestButton}>
+        <TouchableOpacity style={styles.guestButton} onPress={onGuest}>
           <Text style={styles.guestText}>Continue as Guest</Text>
         </TouchableOpacity>
 
