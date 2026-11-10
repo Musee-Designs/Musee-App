@@ -1,16 +1,18 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 
 import LoginScreen from './src/screens/login';
 import SignupScreen from './src/screens/signup';
-import MainTabNavigator from './src/navigation/MainTabNavigator';
+import MainTabNavigator, { MainTabParamList } from './src/navigation/MainTabNavigator';
+import SearchScreen from './src/services/screens/search';
 
 export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
-  Main: undefined;
+  Main: NavigatorScreenParams<MainTabParamList> | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +29,7 @@ export default function App() {
             {({ navigation }) => (
               <LoginScreen
                 onCreateAccount={() => navigation.navigate('SignUp')}
+                onGuest={() => navigation.navigate('Main', {screen: 'HomeFeed'})}
               />
             )}
           </Stack.Screen>
