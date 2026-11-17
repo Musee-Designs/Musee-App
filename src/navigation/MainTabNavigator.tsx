@@ -6,6 +6,11 @@ import type { ComponentProps } from 'react';
 import PlaceholderScreen from '../../screens/placeholderScreen';
 import DailyDrop from '../screens/daily-drop';
 import SharedMixes from '../screens/shared-mixes';
+import SearchScreen from '../screens/search';
+import Friends from '../screens/friends';
+import Profile from '../screens/profile';
+
+import type { User } from '../types/models';
 
 export type MainTabParamList = {
   HomeFeed: undefined;
@@ -22,18 +27,6 @@ function HomeFeedScreen() {
   return <PlaceholderScreen title="Home Feed" />;
 }
 
-function SearchScreen() {
-  return <PlaceholderScreen title="Search" />;
-}
-
-function FriendsScreen() {
-  return <PlaceholderScreen title="Friends" />;
-}
-
-function ProfileScreen() {
-  return <PlaceholderScreen title="Profile" />;
-}
-
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 const tabIcons: Record<keyof MainTabParamList, IconName> = {
@@ -45,7 +38,13 @@ const tabIcons: Record<keyof MainTabParamList, IconName> = {
   Profile: 'person-outline',
 };
 
-export default function MainTabNavigator() {
+type MainTabNavigatorProps = {
+  profile: User | null;
+  guest: boolean;
+  onExit: () => void;
+};
+
+export default function MainTabNavigator({profile, guest, onExit }: MainTabNavigatorProps) {
   return (
     <Tab.Navigator
       initialRouteName="HomeFeed"
@@ -88,17 +87,16 @@ export default function MainTabNavigator() {
       />
       <Tab.Screen
         name="Friends"
-        component={FriendsScreen}
+        component={Friends}
       />
       <Tab.Screen
         name="SharedMixes"
         component={SharedMixes}
         options={{ title: 'Mixes' }}
       />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-      />
+      <Tab.Screen name="Profile">
+        {() => (<Profile profile={profile} guest={guest} onSignOut={onExit}/>)}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

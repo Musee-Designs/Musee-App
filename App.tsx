@@ -1,5 +1,5 @@
-import React from 'react';
-import {ActivityIndicator, Button, StyleSheet, Text, View} from 'react-native';
+import React, { useState } from 'react';
+import {ActivityIndicator, Alert, Button, StyleSheet, Text, View} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -9,7 +9,10 @@ import SignupScreen from './src/screens/signup';
 import MainTabNavigator from './src/navigation/MainTabNavigator';
 
 import { useAuth } from './src/hooks/useAuth';
-import { logOut } from './src/services/authService';
+import {
+  logOut,
+  getAuthErrorMessage,
+} from './src/services/authService';
 
 type RootStackParamList = {
   Login: undefined;
@@ -21,6 +24,23 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const { user, profile, loading, error } = useAuth();
+  const [guestMode, setGuestMode] = useState(false);
+
+  async function handleExit() {
+    if (guestMode) {
+      setGuestMode(false);
+      return;
+    }
+
+    try {
+      await logOut();
+    } catch (signOutError) {
+      Alert.alert(
+        'Sign Out Failed',
+        getAuthErrorMessage(signOutError)
+      );
+    }
+  }
 
   if (loading) {
     return (
@@ -29,7 +49,9 @@ export default function App() {
           size="large"
           color="#A52D40"
         />
-        <Text style={styles.message}>Loading Musee...</Text>
+        <Text style={styles.message}>
+          Loading Musee...
+        </Text>
       </View>
     );
   }
@@ -40,10 +62,14 @@ export default function App() {
         <Text style={styles.message}>
           Unable to load your account.
         </Text>
-        <Text style={styles.error}>{error}</Text>
+
+        <Text style={styles.error}>
+          {error}
+        </Text>
+
         <Button
           title="Sign Out"
-          onPress={() => void logOut()}
+          onPress={() => void handleExit()}
         />
       </View>
     );
@@ -55,7 +81,7 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{ headerShown: false }}
         >
-          {!user ? (
+          {!user && !guestMode ? (
             <>
               <Stack.Screen name="Login">
                 {({ navigation }) => (
@@ -63,6 +89,7 @@ export default function App() {
                     onCreateAccount={() =>
                       navigation.navigate('SignUp')
                     }
+                    onGuest={() => setGuestMode(true)}
                   />
                 )}
               </Stack.Screen>
@@ -77,15 +104,16 @@ export default function App() {
                 )}
               </Stack.Screen>
             </>
-          // ) : !profile ? (
-          //   <Stack.Screen name="Profile">
-          //     {() => <ProfileScreen user={user} />}
-          //   </Stack.Screen>
           ) : (
-            <Stack.Screen
-              name="Main"
-              component={MainTabNavigator}
-            />
+            <Stack.Screen name="Main">
+              {() => (
+                <MainTabNavigator
+                  profile={profile}
+                  guest={guestMode}
+                  onExit={() => void handleExit()}
+                />
+              )}
+            </Stack.Screen>
           )}
         </Stack.Navigator>
       </NavigationContainer>

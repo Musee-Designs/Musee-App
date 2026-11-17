@@ -5,16 +5,24 @@ import {getAuthErrorMessage, logIn, resetPassword } from '../services/authServic
 
 type LoginScreenProps = {
   onCreateAccount: () => void;
+  onGuest: () => void;
 };
 
-export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
+
+export default function LoginScreen({
+  onCreateAccount,
+  onGuest,
+}: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   async function handleLogin() {
     if (!email.trim() || !password) {
-      Alert.alert('Missing information', 'Enter your email and password.');
+      Alert.alert(
+        'Missing Information',
+        'Please enter your email and password.'
+      );
       return;
     }
 
@@ -23,7 +31,10 @@ export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
     try {
       await logIn(email, password);
     } catch (error) {
-      Alert.alert('Sign In Failed', getAuthErrorMessage(error));
+      Alert.alert(
+        'Sign In Failed',
+        getAuthErrorMessage(error)
+      );
     } finally {
       setSubmitting(false);
     }
@@ -31,18 +42,25 @@ export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
 
   async function handleResetPassword() {
     if (!email.trim()) {
-      Alert.alert('Enter your email address first.');
+      Alert.alert(
+        'Missing Email',
+        'Please enter your email address first.'
+      );
       return;
     }
 
     try {
       await resetPassword(email);
+
       Alert.alert(
-        'Check your email',
-        'If an account exists for this email, you will receive a reset link.'
+        'Check Your Email',
+        'If an account exists for this email, you will receive a password reset link.'
       );
     } catch (error) {
-      Alert.alert('Unable to send email', getAuthErrorMessage(error));
+      Alert.alert(
+        'Reset Failed',
+        getAuthErrorMessage(error)
+      );
     }
   }
 
@@ -85,7 +103,7 @@ export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
           <Text style={styles.signInText}> {submitting ? 'Signing In...' : 'Sign In'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.guestButton}>
+        <TouchableOpacity style={styles.guestButton} onPress={onGuest}>
           <Text style={styles.guestText}>Continue as Guest</Text>
         </TouchableOpacity>
 
