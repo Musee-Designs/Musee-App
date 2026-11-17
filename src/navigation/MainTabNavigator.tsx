@@ -6,6 +6,7 @@ import type { ComponentProps } from 'react';
 import PlaceholderScreen from '../../screens/placeholderScreen';
 import DailyDrop from '../services/screens/daily-drop';
 import SharedMixes from '../services/screens/shared-mixes';
+import SearchScreen from '../services/screens/search';
 
 export type MainTabParamList = {
   HomeFeed: undefined;
@@ -22,9 +23,6 @@ function HomeFeedScreen() {
   return <PlaceholderScreen title="Home Feed" />;
 }
 
-function SearchScreen() {
-  return <PlaceholderScreen title="Search" />;
-}
 
 function FriendsScreen() {
   return <PlaceholderScreen title="Friends" />;
