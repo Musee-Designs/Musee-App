@@ -1,8 +1,31 @@
 import {StyleSheet, Text, View, ScrollView, Pressable} from 'react-native';
-import {useAuth} from '../context/AuthContext';
+import { logOut, getAuthErrorMessage } from '../services/authService';
+import { Alert } from 'react-native';
+import type { User } from '../types/models';
 
-export default function Profile() {
-    const {signOut} = useAuth();
+type ProfileProps = {
+  profile: User | null;
+  guest: boolean;
+  onSignOut: () => void;
+};
+
+export default function Profile({
+  profile,
+  guest,
+  onSignOut,
+}: ProfileProps) {
+  async function handleSignOut() {
+    if (guest) {
+      onSignOut();
+      return;
+    }
+
+    try {
+      await logOut();
+    } catch (error) {
+      Alert.alert('Sign Out Failed', getAuthErrorMessage(error));
+    }
+  }
 
     return (
         <ScrollView style={styles.container}>
@@ -15,10 +38,11 @@ export default function Profile() {
 
                 <View style={styles.profileHeader}>
                     <View style={[styles.bigAvatar, {backgroundColor: '#bc9ec1'}]}>
-                        <Text style={styles.bigAvatarText}>J</Text>
+                        <Text style={styles.bigAvatarText}>{guest ? 'G' : (profile?.displayName?.[0] ?? 'M').toUpperCase()}</Text>
                     </View>
-                    <Text style={styles.name}>Jordan Lee</Text>
-                    <Text style={styles.handle}>@jordanlee</Text>
+                    <Text style={styles.name}>{guest ? 'Guest' : profile?.displayName ?? 'Musee User'}</Text>
+
+                    <Text style={styles.handle}>{guest ? 'Preview Mode' : `@${profile?.username ?? 'user'}`}</Text>
                     <Text style={styles.stats}>86 posts  •  204 friends  •  5 mixes</Text>
                 </View>
 
@@ -56,7 +80,7 @@ export default function Profile() {
                 </View>
 
                 {/* Mock: flips isSignedIn back to false. Firebase Auth replaces this later. */}
-                <Pressable style={styles.signOutContainer} onPress={signOut}>
+                <Pressable style={styles.signOutContainer} onPress={handleSignOut}>
                     <Text style={styles.signOutText}>Sign Out</Text>
                 </Pressable>
 
