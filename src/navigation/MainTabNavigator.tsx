@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 
 import PlaceholderScreen from '../../screens/placeholderScreen';
-import DailyDrop from '../services/screens/daily-drop';
-import SharedMixes from '../services/screens/shared-mixes';
+import DailyDrop from '../screens/daily-drop';
+import SharedMixes from '../screens/shared-mixes';
 
 export type MainTabParamList = {
   HomeFeed: undefined;

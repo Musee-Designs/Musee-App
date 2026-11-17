@@ -1,12 +1,51 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import {getAuthErrorMessage, logIn, resetPassword } from '../services/authService';
 
 type LoginScreenProps = {
   onCreateAccount: () => void;
 };
 
 export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleLogin() {
+    if (!email.trim() || !password) {
+      Alert.alert('Missing information', 'Enter your email and password.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      await logIn(email, password);
+    } catch (error) {
+      Alert.alert('Sign In Failed', getAuthErrorMessage(error));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!email.trim()) {
+      Alert.alert('Enter your email address first.');
+      return;
+    }
+
+    try {
+      await resetPassword(email);
+      Alert.alert(
+        'Check your email',
+        'If an account exists for this email, you will receive a reset link.'
+      );
+    } catch (error) {
+      Alert.alert('Unable to send email', getAuthErrorMessage(error));
+    }
+  }
+
   return (
   <View style={styles.background}>
     <View style={styles.container}>
@@ -30,19 +69,28 @@ export default function LoginScreen({ onCreateAccount }: LoginScreenProps) {
           placeholder="testaccount@email.com"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+          autoCorrect={false}
         />
         <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter your password"
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
         />
-        <TouchableOpacity style={styles.signInButton}>
-          <Text style={styles.signInText}>Sign In</Text>
+        <TouchableOpacity style={styles.signInButton} onPress={handleLogin} disabled={submitting}>
+          <Text style={styles.signInText}> {submitting ? 'Signing In...' : 'Sign In'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.guestButton}>
           <Text style={styles.guestText}>Continue as Guest</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleResetPassword} style={{ alignSelf: 'flex-end', marginTop: 12 }}>
+          <Text style={{ color: '#A52D40', fontWeight: '600' }}> Forgot Password? </Text>
         </TouchableOpacity>
 
       </View>

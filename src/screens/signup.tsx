@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   View,
@@ -11,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import {getAuthErrorMessage, signUp} from '../services/authService';
 
 type SignupScreenProps = {
   onLogin: () => void;
@@ -18,6 +18,36 @@ type SignupScreenProps = {
 
 export default function SignupScreen({ onLogin }: SignupScreenProps) {
   const [agreed, setAgreed] = useState(false);
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSignUp() {
+    if (!agreed) {
+      Alert.alert('Please agree to the Terms of Service.');
+      return;
+    }
+
+    if (!name.trim() || !username.trim() || !email.trim() || !password) {
+      Alert.alert('Missing information', 'Please complete all fields.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      await signUp(email, password, name, username);
+    } catch (error) {
+      Alert.alert(
+        'Unable to Create Account',
+        getAuthErrorMessage(error)
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <View style={styles.background}>
@@ -46,6 +76,20 @@ export default function SignupScreen({ onLogin }: SignupScreenProps) {
               style={styles.input}
               placeholder="Test Account"
               autoCapitalize="words"
+              value={name}
+              onChangeText={setName}
+              maxLength={80}
+            />
+
+            <Text style={styles.label}>Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="musiclover"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              autoCorrect={false}
+              maxLength={30}
             />
 
             <Text style={styles.label}>Email Address</Text>
@@ -55,6 +99,8 @@ export default function SignupScreen({ onLogin }: SignupScreenProps) {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              value={email}
+              onChangeText={setEmail}
             />
 
             <Text style={styles.label}>Password</Text>
@@ -62,6 +108,8 @@ export default function SignupScreen({ onLogin }: SignupScreenProps) {
               style={styles.input}
               placeholder="Enter your password"
               secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
             />
 
             {/* Terms of Service */}
@@ -90,22 +138,11 @@ export default function SignupScreen({ onLogin }: SignupScreenProps) {
             {/* Create Account Button */}
             <TouchableOpacity
               style={styles.createButton}
-              onPress={() => {
-                if (!agreed) {
-                  Alert.alert(
-                    'Please agree to the Terms of Service'
-                  );
-                  return;
-                }
-
-                Alert.alert(
-                  'Create Account',
-                  'Authentication coming soon!'
-                );
-              }}
+              onPress={handleSignUp}
+              disabled={submitting}
             >
               <Text style={styles.createButtonText}>
-                Create Account
+                {submitting ? 'Creating Account...' : 'Create Account'}
               </Text>
             </TouchableOpacity>
 
